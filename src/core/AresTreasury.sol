@@ -97,7 +97,7 @@ contract AresTreasury is IAresTreasury, EIP712, ReentrancyGuard {
         bytes32 proposalHash,
         AresStructs.Call[] calldata calls
     ) external payable nonReentrant {
-        // --- CHECKS ---
+        
         if (calls.length == 0) revert AresErrors.InvalidLength();
         AresStructs.Proposal storage proposal = proposals[proposalHash];
         if (proposal.state == AresStructs.ProposalState.None)
@@ -108,10 +108,10 @@ contract AresTreasury is IAresTreasury, EIP712, ReentrancyGuard {
         bytes32 callsHash = hashCalls(calls);
         if (proposal.callsHash != callsHash) revert AresErrors.InvalidProof();
 
-        // --- EFFECTS ---
+        
         proposal.state = AresStructs.ProposalState.Executed;
 
-        // --- INTERACTIONS ---
+     
         timeDelayEngine.markExecuted(proposalHash);
 
         for (uint256 i = 0; i < calls.length; i++) {
@@ -124,7 +124,7 @@ contract AresTreasury is IAresTreasury, EIP712, ReentrancyGuard {
         emit Executed(proposalHash, msg.sender);
     }
 
-    // Convenience getter for frontends or tests
+   
     function getProposal(
         bytes32 proposalHash
     ) external view returns (AresStructs.Proposal memory) {
@@ -149,7 +149,7 @@ contract AresTreasury is IAresTreasury, EIP712, ReentrancyGuard {
         if (v < 27) v += 27;
         if (v != 27 && v != 28) return address(0);
 
-        // Prevent signature malleability (EIP-2)
+       
         if (
             uint256(s) >
             0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5D576E7357A4501DDFE92F46681B20A0

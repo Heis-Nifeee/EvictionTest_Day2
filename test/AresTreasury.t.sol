@@ -18,7 +18,6 @@ contract AresTreasuryTest is Test {
     uint256 proposerPk = 0xA11CE;
     address proposer = vm.addr(proposerPk);
 
-    // Type hashes - must match contract
     bytes32 constant PROPOSE_TYPEHASH =
         keccak256("Propose(address proposer,bytes32 callsHash,uint256 nonce)");
     bytes32 constant CALL_TYPEHASH = keccak256("Call(address target,uint256 value,bytes data)");
@@ -35,12 +34,11 @@ contract AresTreasuryTest is Test {
         token.mint(address(rewardDistributor), 1000 ether);
     }
 
-    // Helper: hash a single call (matches contract's hashCall)
     function _hashCall(AresStructs.Call memory c) internal pure returns (bytes32) {
         return keccak256(abi.encode(CALL_TYPEHASH, c.target, c.value, keccak256(c.data)));
     }
 
-    // Helper: hash calls array (matches contract's hashCalls)
+
     function _hashCalls(AresStructs.Call[] memory calls) internal pure returns (bytes32) {
         bytes32[] memory callHashes = new bytes32[](calls.length);
         for (uint256 i = 0; i < calls.length; i++) {
@@ -49,13 +47,12 @@ contract AresTreasuryTest is Test {
         return keccak256(abi.encodePacked(callHashes));
     }
 
-    // Helper: sign proposal
     function _sign(bytes32 digest) internal view returns (bytes memory) {
         (uint8 v, bytes32 r, bytes32 s) = vm.sign(proposerPk, digest);
         return abi.encodePacked(r, s, v);
     }
 
-    // Helper: get EIP712 digest
+
     function _digest(
         bytes32 callsHash,
         uint256 nonce,
@@ -79,7 +76,6 @@ contract AresTreasuryTest is Test {
         return keccak256(abi.encodePacked("\x19\x01", domainSep, structHash));
     }
 
-    // === FUNCTIONAL TESTS ===
 
     function test_proposalLifecycle() public {
         // Create call
@@ -110,7 +106,7 @@ contract AresTreasuryTest is Test {
         assertEq(token.balanceOf(proposer), 100);
     }
 
-    // === EXPLOIT TESTS ===
+    // my Exploit tests
 
     function test_invalidSignature() public {
         AresStructs.Call[] memory calls = new AresStructs.Call[](1);
